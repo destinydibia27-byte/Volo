@@ -19,10 +19,11 @@ import { useSmartAccount } from "./useSmartAccount";
 export type AccountMode = "smart" | "wallet";
 const KEY = "volo-account-mode";
 /**
- * Which account people get before they choose. "wallet" until gasless accounts have been proven
- * against the real ZeroDev service; then change this to "smart" and everyone who never chose gets it.
+ * Which account people get before they choose. Gasless smart accounts were proven against the real
+ * ZeroDev service (sponsored activation, then a scheduled run from the smart account), so "smart"
+ * is the default. Anyone who picked "My wallet" in Settings keeps their choice (it is stored).
  */
-const DEFAULT_MODE: AccountMode = "wallet";
+const DEFAULT_MODE: AccountMode = "smart";
 const listeners = new Set<() => void>();
 
 function readStored(): AccountMode | null {

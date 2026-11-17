@@ -91,7 +91,7 @@ Secrets are server-side only. Anything starting with `NEXT_PUBLIC_` is visible i
 
 ## Accounts: wallet or smart account
 
-A person is the address that owns their automations and recipients. By default that is their **wallet**. When `NEXT_PUBLIC_ZERODEV_PROJECT_ID` is set, Settings offers a second choice, a **gasless smart account** (a ZeroDev Kernel account the wallet controls). The two are different addresses, so each has its own recipients and automations. The USDC to be sent must be in the smart account.
+A person is the address that owns their automations and recipients. When `NEXT_PUBLIC_ZERODEV_PROJECT_ID` is set, the default is a **gasless smart account** (a ZeroDev Kernel account the wallet controls), and Settings > Account > Advanced offers **My wallet** instead. Without that setting everyone uses their wallet. The two are different addresses, so each has its own recipients and automations. The USDC to be sent must be in the smart account.
 
 - `frontend/app/components/useActiveAccount.ts` is the one place that answers "who am I and how do I sign". Every page asks it, so the identity, the signature and the list of automations always agree. The default is the `DEFAULT_MODE` constant in that file.
 - `frontend/lib/zerodev.ts` builds the smart account and sends sponsored transactions. The SDK is loaded only when it is used.

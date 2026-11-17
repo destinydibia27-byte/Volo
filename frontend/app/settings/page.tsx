@@ -80,6 +80,16 @@ export default function Settings() {
     }
   }
 
+  const accountOption = (value: "smart" | "wallet", title: string, blurb: string) => (
+    <label className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3 text-sm ${account.mode === value ? "border-brand bg-surface" : "border-line"}`}>
+      <span className="flex items-center gap-2 font-semibold text-navy">
+        <input type="radio" name="account" checked={account.mode === value} onChange={() => account.setMode(value)} className="accent-brand focus-visible:ring-2 focus-visible:ring-electric" />
+        {title}
+      </span>
+      <span className="text-slate-600">{blurb}</span>
+    </label>
+  );
+
   const accountCard = account.smartEnabled && account.connected && (
         <section className="card mt-6" aria-labelledby="acct">
           <h2 id="acct" className="text-base font-semibold text-navy">Account</h2>
@@ -87,19 +97,15 @@ export default function Settings() {
             Volo can run your automations from a <strong className="text-navy">smart account</strong> your wallet controls, with gas paid for you, or
             straight from your wallet. Your recipients and automations belong to the account you choose, so switching shows a different set.
           </p>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2" role="radiogroup" aria-labelledby="acct">
-            {([
-              ["smart", "Smart account (gasless)", "No gas to pay. The USDC to be sent is held in the smart account, which is a separate address from your wallet."],
-              ["wallet", "My wallet", "The permission belongs to your wallet and you pay gas for each transaction."],
-            ] as const).map(([value, title, blurb]) => (
-              <label key={value} className={`flex cursor-pointer flex-col gap-1 rounded-xl border p-3 text-sm ${account.mode === value ? "border-brand bg-surface" : "border-line"}`}>
-                <span className="flex items-center gap-2 font-semibold text-navy">
-                  <input type="radio" name="account" checked={account.mode === value} onChange={() => account.setMode(value)} className="accent-brand focus-visible:ring-2 focus-visible:ring-electric" />
-                  {title}
-                </span>
-                <span className="text-slate-600">{blurb}</span>
-              </label>
-            ))}
+          <div className="mt-3" role="radiogroup" aria-labelledby="acct">
+            {accountOption("smart", "Smart account (gasless)", "No gas to pay. The USDC to be sent is held in the smart account, which is a separate address from your wallet.")}
+            {/* Kept one click away, and open whenever it is in use or the smart account has a problem, so there is always a way out. */}
+            <details className="mt-3 text-sm" open={account.mode === "wallet" || Boolean(account.smart.error)}>
+              <summary className="cursor-pointer font-medium text-slate-700 focus-visible:ring-2 focus-visible:ring-electric">Advanced</summary>
+              <div className="mt-2">
+                {accountOption("wallet", "My wallet", "The permission belongs to your wallet and you pay gas for each transaction.")}
+              </div>
+            </details>
           </div>
           {account.isSmart && account.smart.loading && <p className="mt-3 text-sm text-slate-600">Preparing your smart account…</p>}
           {account.isSmart && account.smart.error && <Alert tone="danger" title="Could not prepare the smart account" className="mt-3">{account.smart.error}</Alert>}
