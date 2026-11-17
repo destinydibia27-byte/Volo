@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useOwnerAutomations } from "../components/useOwnerAutomations";
+import { useActiveAccount } from "../components/useActiveAccount";
 
 const STEPS = [
   { n: "1", title: "Create", body: "Describe an onchain action in plain English." },
@@ -29,6 +30,7 @@ function Tick({ done }: { done: boolean }) {
 
 export default function Welcome() {
   const { address, automations, loading } = useOwnerAutomations();
+  const { smartEnabled } = useActiveAccount();
   const [recipientCount, setRecipientCount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -45,7 +47,9 @@ export default function Welcome() {
     {
       done: Boolean(address),
       title: "Connect your wallet",
-      body: "Use the button at the top right. Your automations are filed under your wallet address, and only your wallet can change them.",
+      body: smartEnabled
+        ? "Use the button at the top right. Your automations are filed under your gasless smart account (or under your wallet itself, if you choose that in Settings), and only your wallet can change them."
+        : "Use the button at the top right. Your automations are filed under your wallet address, and only your wallet can change them.",
       action: null as null | { href: string; label: string },
     },
     {
@@ -119,8 +123,10 @@ export default function Welcome() {
         <h2 id="testnet" className="eyebrow">Before you try it</h2>
         <p className="mt-3 text-sm text-slate-600">
           Volo runs on the Arbitrum Sepolia <strong className="text-navy">test network</strong>. Everything uses test tokens with no real value, and
-          the contract is unaudited. You need a little test ETH for gas and some test USDC in the wallet you connect. Both are free from public
-          test-network faucets. Please don&apos;t use funds you cannot afford to lose.
+          the contract is unaudited. {smartEnabled
+            ? "You need some test USDC, which is free from public test-network faucets. It goes into your smart account (its address is in Settings), and gas is paid for you. If you switch to your own wallet under Advanced in Settings, you also need a little test ETH for gas."
+            : "You need a little test ETH for gas and some test USDC in the wallet you connect. Both are free from public test-network faucets."}{" "}
+          Please don&apos;t use funds you cannot afford to lose.
         </p>
         <p className="mt-3 text-sm text-slate-600">
           To read your sentence, Volo sends the text you type to an AI service. It sees only that text, never your wallet or keys. Don&apos;t type
